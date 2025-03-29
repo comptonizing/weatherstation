@@ -17,7 +17,7 @@ class Wind {
 		int maxRaw();
 		float speed();
 		float gust();
-		void update();
+		void update(bool force = false);
 
 	private:
 		Wind();

@@ -10,6 +10,7 @@ Wind::Wind() {
 		m_historyRaw[ii] = WIND_NAN;
 		m_historyTime[ii] = 0;
 	}
+	update(true);
 }
 
 Wind::~Wind() {
@@ -19,10 +20,10 @@ int Wind::readRaw() {
 	return analogRead(WIND_PIN);
 }
 
-void Wind::update() {
+void Wind::update(bool force) {
 	mytime_t time = millis();
 
-	if ( (time - m_historyTime[0]) < WIND_SAMPLE_INTERVAL_SECONDS * 1000 ) {
+	if ( (time - m_historyTime[0]) < WIND_SAMPLE_INTERVAL_SECONDS * 1000 && ! force ) {
 		// Not enough time passed, skip measurement
 		return;
 	}
