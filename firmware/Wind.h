@@ -13,7 +13,7 @@
 class Wind {
 	public:
 		static Wind &i();
-    float avgRaw();
+		float avgRaw();
 		int maxRaw();
 		float speed();
 		float gust();
