@@ -92,14 +92,11 @@ float Rain::heatingPower() {
 
 void Rain::update(bool force) {
 	m_lastTemperature = readTemperature();
-	Serial.print("Temperature: ");
-	Serial.println(m_lastTemperature);
 	m_targetTemperature = BME280::i().temperature() + RAIN_TEMPERATURE_OFFSET;
-	Serial.print("Target: ");
-	Serial.println(m_targetTemperature);
+	if ( m_targetTemperature > RAIN_MAX_TEMPERATURE ) {
+		m_targetTemperature = RAIN_MAX_TEMPERATURE;
+	}
 	m_pid.Compute();
-	Serial.print("Dutycycle: ");
-	Serial.println(m_pidDutyCycle);
 	analogWrite(RAIN_PIN_HEATING, m_pidDutyCycle);
 
 	mytime_t time = millis();

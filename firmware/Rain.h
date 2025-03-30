@@ -17,6 +17,7 @@
 #define RAIN_CAPACITANCE_DRY_PF      250.
 #define RAIN_CAPACITANCE_WET_PF      800.
 #define RAIN_TEMPERATURE_OFFSET      5
+#define RAIN_MAX_TEMPERATURE         45
 
 class Rain {
 	public:
