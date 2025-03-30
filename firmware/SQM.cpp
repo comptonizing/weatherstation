@@ -13,7 +13,7 @@ SQM::SQM() {
 	m_tsl->configSensor();
 	m_tsl->setCalibrationOffset(0.0);
 	m_tsl->verbose = false;
-	m_tsl->takeReading();
+	update(true);
 }
 
 SQM::~SQM() {
@@ -47,9 +47,9 @@ float SQM::gain() {
 	return m_tsl->gainValue;
 }
 
-void SQM::update() {
+void SQM::update(bool force) {
 	mytime_t time = millis();
-	if ( (time - m_lastReading) < SQM_SAMPLE_INTERVAL_SECONDS ) {
+	if ( (time - m_lastReading) < SQM_SAMPLE_INTERVAL_SECONDS * 1000 && ! force ) {
 		return;
 	}
 	m_tsl->takeReading();

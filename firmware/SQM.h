@@ -10,7 +10,7 @@
 class SQM {
 	public:
 		static SQM &i();
-		void update();
+		void update(bool force = false);
 		uint16_t ir();
 		uint16_t full();
 		uint16_t vis();
