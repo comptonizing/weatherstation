@@ -94,7 +94,12 @@ void Rain::update(bool force) {
 	m_lastTemperature = readTemperature();
 	m_targetTemperature = BME280::i().temperature() + RAIN_TEMPERATURE_OFFSET;
 	if ( m_targetTemperature > RAIN_MAX_TEMPERATURE ) {
+		// Prevent hot temperatures
 		m_targetTemperature = RAIN_MAX_TEMPERATURE;
+	}
+	if ( m_targetTemperature < RAIN_MIN_TEMPERATURE ) {
+		// Prevent stuff from freezing
+		m_targetTemperature = RAIN_MIN_TEMPERATURE;
 	}
 	m_pid.Compute();
 	analogWrite(RAIN_PIN_HEATING, m_pidDutyCycle);
