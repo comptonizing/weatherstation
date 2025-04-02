@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Adafruit_MLX90614.h>
 
 class IR {
