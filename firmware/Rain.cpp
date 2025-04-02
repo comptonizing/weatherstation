@@ -68,7 +68,7 @@ float Rain::readCapacitance() {
 		}
 	}
 
-	capacitance = ( (float) elapsed / RAIN_RESISTANCE ) * 1000 * 1000;
+	capacitance = ( (float) elapsed / RAIN_RESISTANCE ) * THOUSAND * THOUSAND;
 	return capacitance;
 }
 
@@ -100,7 +100,7 @@ void Rain::update(bool force) {
 	analogWrite(RAIN_PIN_HEATING, m_pidDutyCycle);
 
 	mytime_t time = millis();
-	if ( (time - m_lastReading) < RAIN_SAMPLE_INTERVAL_SECONDS * 1000 && ! force ) {
+	if ( (time - m_lastReading) < RAIN_SAMPLE_INTERVAL_SECONDS * THOUSAND && ! force ) {
 		return;
 	}
 

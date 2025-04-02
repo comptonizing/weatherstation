@@ -16,7 +16,7 @@ BME280::~BME280() {
 
 void BME280::update(bool force) {
 	mytime_t time = millis();
-	if ( (time - m_lastReading) < BME280_SAMPLE_INTERVAL_SECONDS * 1000 && ! force ) {
+	if ( (time - m_lastReading) < BME280_SAMPLE_INTERVAL_SECONDS * THOUSAND && ! force ) {
 		return;
 	}
 	m_lastReading = time;

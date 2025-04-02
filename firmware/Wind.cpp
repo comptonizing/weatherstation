@@ -23,7 +23,7 @@ int Wind::readRaw() {
 void Wind::update(bool force) {
 	mytime_t time = millis();
 
-	if ( (time - m_historyTime[0]) < WIND_SAMPLE_INTERVAL_SECONDS * 1000 && ! force ) {
+	if ( (time - m_historyTime[0]) < WIND_SAMPLE_INTERVAL_SECONDS * THOUSAND && ! force ) {
 		// Not enough time passed, skip measurement
 		return;
 	}
@@ -44,7 +44,7 @@ float Wind::avgRaw() {
 	int n = 0;
 	for (int ii=0; ii<WIND_HISTORY_SIZE; ii++) {
 		if (
-				(time - m_historyTime[ii]) > WIND_PERIOD_SECONDS * 1000 ||
+				(time - m_historyTime[ii]) > WIND_PERIOD_SECONDS * THOUSAND ||
 				m_historyRaw[ii] == WIND_NAN
 		   ) {
 			break;
@@ -61,7 +61,7 @@ int Wind::maxRaw() {
 	int thismax = 0;
 	for (int ii=0; ii<WIND_HISTORY_SIZE; ii++) {
 		if (
-				(time - m_historyTime[ii]) > WIND_PERIOD_SECONDS * 1000 ||
+				(time - m_historyTime[ii]) > WIND_PERIOD_SECONDS * THOUSAND ||
 				m_historyRaw[ii] == WIND_NAN
 		   ) {
 			break;

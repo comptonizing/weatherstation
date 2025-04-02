@@ -49,7 +49,7 @@ float SQM::gain() {
 
 void SQM::update(bool force) {
 	mytime_t time = millis();
-	if ( (time - m_lastReading) < SQM_SAMPLE_INTERVAL_SECONDS * 1000 && ! force ) {
+	if ( (time - m_lastReading) < SQM_SAMPLE_INTERVAL_SECONDS * THOUSAND && ! force ) {
 		return;
 	}
 	m_tsl->takeReading();
