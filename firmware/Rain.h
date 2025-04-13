@@ -30,6 +30,7 @@ class Rain {
 		float percentage();
 		float temperature();
 		float heatingPower();
+		float heatingDutyCycle();
 
 	private:
 		Rain();

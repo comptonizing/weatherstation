@@ -44,6 +44,7 @@ void sendRain() {
   sendValue(F("Rain percentage: "), i->percentage());
   sendValue(F("Rain temperature: "), i->temperature());
   sendValue(F("Rain heating: "), i->heatingPower());
+  sendValue(F("Rain dutycycle: "), i->heatingDutyCycle());
 }
 
 void sendSQM() {

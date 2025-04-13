@@ -85,9 +85,13 @@ float Rain::capacitance2percentage(float capacitance) {
 	return val > 100. ? 100. : val;
 }
 
-float Rain::heatingPower() {
+float Rain::heatingDutyCycle() {
 	update();
 	return 100. * m_pidDutyCycle / 255.;
+}
+
+float Rain::heatingPower() {
+	return 0.03428571428571428 * heatingDutyCycle();
 }
 
 void Rain::update(bool force) {
