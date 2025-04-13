@@ -5,6 +5,11 @@
 
 #include "SQM_TSL2591.h"
 
+// Relative effective are is 0.2666666
+// Correction of SQM calculation:
+// -2.5 * log10(Aeff)
+#define SQM_CORR 1.4350781693220116
+
 #include "common.h"
 
 #define SQM_SAMPLE_INTERVAL_SECONDS 5
