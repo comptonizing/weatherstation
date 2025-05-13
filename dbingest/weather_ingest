@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+import sys
+import argparse
+import serial
+from parse import parse
+from influxdb_client import InfluxDBClient, WriteOptions, Point
+
+parser = argparse.ArgumentParser(description = "Weather database ingestor")
+
+parser.add_argument("--port", help="Serial port", required=True)
+parser.add_argument("--baud", required=True, help="Baud rate")
+parser.add_argument("--db-url", required=True, help="InfluxDB URL")
+parser.add_argument("--db-token", required=True, help="InfluxDB token")
+parser.add_argument("--db-org", required=True, help="InfluxDB organization")
+parser.add_argument("--db-bucket", required=True, help="InfluxDB bucket")
+parser.add_argument("--writer-batch-size", required=False, default=20, help="InfluxDB write option batch_size", type=int)
+parser.add_argument("--writer-flush-interval", required=False, default=10000, help="InfluxDB write option flush_interval", type=int)
+parser.add_argument("--writer-jitter-interval", required=False, default=0, help="InfluxDB write option jitter_interval", type=int)
+parser.add_argument("--writer-retry-interval", required=False, default=5000, help="InfluxDB write option retry_interval", type=int)
+parser.add_argument("--writer-max-retry-time", required=False, default=600000, help="InfluxDB write option max_retry_time", type=int)
+parser.add_argument("--writer-max-retries", required=False, default=100, help="InfluxDB write option max_retries", type=int)
+parser.add_argument("--writer-max-retry-delay", required=False, default=60000, help="InfluxDB write option max_retry_delay", type=int)
+parser.add_argument("--writer-max-close-wait", required=False, default=60000, help="InfluxDB write option max_close_wait", type=int)
+parser.add_argument("--writer-exponential-base", required=False, default=2, help="InfluxDB write option exponential_base", type=int)
+
+parameterMap = {
+        "Weather: Environment Temperature": "env_temperature",
+        "Weather: Environment Pressure": "env_pressure",
+        "Weather: Environment Humidity": "env_humidity",
+        "Weather: Environment Dewpoint": "env_dewpoint",
+        "Weather: IR sky": "ir_sky",
+        "Weather: IR ambient": "ir_ambient",
+        "Weather: Rain capacitance": "rain_capacitance",
+        "Weather: Rain percentage": "rain_percentage",
+        "Weather: Rain temperature": "rain_temperature",
+        "Weather: Rain dutycycle": "rain_dutycycle",
+        "Weather: Rain heating": "rain_heating",
+        "Weather: SQM ir": "sqm_ir",
+        "Weather: SQM full": "sqm_full",
+        "Weather: SQM vis": "sqm_vis",
+        "Weather: SQM mpsas": "sqm_mpsas",
+        "Weather: SQM dmpsas": "sqm_dmpsas",
+        "Weather: SQM integration": "sqm_integration",
+        "Weather: SQM gain": "sqm_gain",
+        "Weather: Wind speed": "wind_speed",
+        "Weather: Wind gust": "wind_gust"
+        }
+
+args = parser.parse_args()
+
+port = serial.Serial(args.port, args.baud)
+
+writeOptions = WriteOptions(
+        batch_size = args.writer_batch_size,
+        flush_interval = args.writer_flush_interval,
+        jitter_interval = args.writer_jitter_interval,
+        retry_interval = args.writer_retry_interval,
+        max_retry_time = args.writer_max_retry_time,
+        max_retries = args.writer_max_retries,
+        max_retry_delay = args.writer_max_retry_delay,
+        max_close_wait = args.writer_max_close_wait,
+        exponential_base = args.writer_exponential_base
+)
+
+influxClient = InfluxDBClient(args.db_url, args.db_token, org=args.db_org)
+writer = influxClient.write_api(write_options=writeOptions)
+
+while True:
+    try:
+        line = port.readline().decode("ascii").rstrip()
+        found = False
+        for thing in parameterMap:
+            if line.startswith(thing):
+                found = True
+                break
+        if not found:
+            sys.stderr.write("Warning: Don't know parameter \"{}\"\n".format(line))
+            continue
+        result = parse(thing + ": {}", line)
+        if result is None:
+            sys.stderr.write("Warning: Could not parse \"{}\"\n".format(line))
+            continue
+        key = parameterMap[thing]
+        value = float(result[0])
+        p = Point("weather").field(key, value)
+        writer.write(bucket=args.db_bucket, org=args.db_org, record=p)
+    except Exception as e:
+        sys.stderr.write("Error processing line: {}\n".format(str(e)))
