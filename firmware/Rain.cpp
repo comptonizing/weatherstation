@@ -95,6 +95,7 @@ float Rain::heatingPower() {
 }
 
 void Rain::update(bool force) {
+	auto lastTargetTemperature = m_targetTemperature;
 	m_lastTemperature = readTemperature();
 	m_targetTemperature = BME280::i().temperature() + RAIN_TEMPERATURE_OFFSET;
 	if ( m_targetTemperature > RAIN_MAX_TEMPERATURE ) {
@@ -104,6 +105,11 @@ void Rain::update(bool force) {
 	if ( m_targetTemperature < RAIN_MIN_TEMPERATURE ) {
 		// Prevent stuff from freezing
 		m_targetTemperature = RAIN_MIN_TEMPERATURE;
+	}
+	// Sometimes somehow this gets nan, getting the PID controller stuck
+	// at nan forever, so just fall back to the old value
+	if ( isnan(m_targetTemperature) ) {
+		m_targetTemperature = lastTargetTemperature;
 	}
 	m_pid.Compute();
 	analogWrite(RAIN_PIN_HEATING, m_pidDutyCycle);
