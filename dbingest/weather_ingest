@@ -22,6 +22,7 @@ parser.add_argument("--writer-max-retries", required=False, default=100, help="I
 parser.add_argument("--writer-max-retry-delay", required=False, default=60000, help="InfluxDB write option max_retry_delay", type=int)
 parser.add_argument("--writer-max-close-wait", required=False, default=60000, help="InfluxDB write option max_close_wait", type=int)
 parser.add_argument("--writer-exponential-base", required=False, default=2, help="InfluxDB write option exponential_base", type=int)
+parser.add_argument("--debug", required=False, default=False, action='store_true', help="Write debugging statements")
 
 parameterMap = {
         "Weather: Environment Temperature": "env_temperature",
@@ -65,8 +66,20 @@ writeOptions = WriteOptions(
 influxClient = InfluxDBClient(args.db_url, args.db_token, org=args.db_org)
 writer = influxClient.write_api(write_options=writeOptions)
 
+debug = False
+if args.debug:
+    debug = True
+
+def _d(msg):
+    if debug is False:
+        return
+    sys.stderr.write(msg)
+    sys.stderr.write("\n")
+    sys.stderr.flush()
+
 while True:
     try:
+        _d("Reading line")
         line = port.readline().decode("ascii").rstrip()
         found = False
         for thing in parameterMap:
@@ -76,13 +89,16 @@ while True:
         if not found:
             sys.stderr.write("Warning: Don't know parameter \"{}\"\n".format(line))
             continue
+        _d("Parsing \"{}\"".format(line))
         result = parse(thing + ": {}", line)
         if result is None:
             sys.stderr.write("Warning: Could not parse \"{}\"\n".format(line))
             continue
         key = parameterMap[thing]
         value = float(result[0])
+        _d("Making point")
         p = Point("weather").field(key, value)
+        _d("Submitting to db")
         writer.write(bucket=args.db_bucket, org=args.db_org, record=p)
     except Exception as e:
         sys.stderr.write("Error processing line: {}\n".format(str(e)))
