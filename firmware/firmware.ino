@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <avr/wdt.h>
 
 #include "BME280.h"
 #include "IR.h"
@@ -73,12 +74,17 @@ void sendAll() {
 }
 
 void setup() {
+  wdt_enable(WDTO_8S);
+  wdt_reset();
   Serial.begin(115200);
   updateAll();
+  wdt_reset();
 }
 
 void loop() {
+  wdt_reset();
   updateAll();
+  wdt_reset();
   sendAll();
   delay(DELAY);
 }
