@@ -44,7 +44,8 @@ parameterMap = {
         "Weather: SQM integration": "sqm_integration",
         "Weather: SQM gain": "sqm_gain",
         "Weather: Wind speed": "wind_speed",
-        "Weather: Wind gust": "wind_gust"
+        "Weather: Wind gust": "wind_gust",
+        "Weather: Startup": "startup"
         }
 
 args = parser.parse_args()

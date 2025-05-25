@@ -1,20 +1,24 @@
 #include <Arduino.h>
-#include <avr/wdt.h>
 
+#include "common.h"
 #include "BME280.h"
 #include "IR.h"
 #include "Rain.h"
 #include "SQM.h"
 #include "Wind.h"
+#include "Watchdog.h"
 
-#define PREFIX "Weather: "
-#define DELAY 500
 
 void updateAll() {
+  watchdogReset();
   BME280::i().update();
+  watchdogReset();
   Rain::i().update();
+  watchdogReset();
   SQM::i().update();
+  watchdogReset();
   Wind::i().update();
+  watchdogReset();
 }
 
 template<typename T1, typename T2>
@@ -66,6 +70,7 @@ void sendWind() {
 }
 
 void sendAll() {
+  watchdogReset();
   sendBME280();
   sendIR();
   sendRain();
@@ -74,17 +79,18 @@ void sendAll() {
 }
 
 void setup() {
-  wdt_enable(WDTO_8S);
-  wdt_reset();
   Serial.begin(115200);
+  Serial.println("");
+  sendValue(F("Startup: "), 1);
+#ifdef WATCHDOG_ENABLE
+  watchdogEnable();
+  setWatchdogResetTimer(WATCHDOG_TIMEOUT);
+#endif
   updateAll();
-  wdt_reset();
 }
 
 void loop() {
-  wdt_reset();
   updateAll();
-  wdt_reset();
   sendAll();
   delay(DELAY);
 }
