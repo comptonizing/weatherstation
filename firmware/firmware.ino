@@ -41,6 +41,7 @@ void sendIR() {
   auto i = &(IR::i());
   sendValue(F("IR sky: "), i->skyTemp());
   sendValue(F("IR ambient: "), i->ambientTemp());
+  sendValue(F("IR diff: "), BME280::i().temperature() - i->skyTemp());
 }
 
 void sendRain() {

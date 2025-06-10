@@ -31,6 +31,7 @@ parameterMap = {
         "Weather: Environment Dewpoint": "env_dewpoint",
         "Weather: IR sky": "ir_sky",
         "Weather: IR ambient": "ir_ambient",
+        "Weather: IR diff": "ir_diff",
         "Weather: Rain capacitance": "rain_capacitance",
         "Weather: Rain percentage": "rain_percentage",
         "Weather: Rain temperature": "rain_temperature",
