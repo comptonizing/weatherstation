@@ -28,6 +28,8 @@ void Wind::update(bool force) {
 		return;
 	}
 
+	Serial.print("Taking wind ... ");
+
 	// Shift everything in the buffer back
 	for (int ii=WIND_HISTORY_SIZE-1; ii>0; ii--) {
 		m_historyRaw[ii] = m_historyRaw[ii-1];
@@ -36,6 +38,8 @@ void Wind::update(bool force) {
 
 	m_historyRaw[0] = readRaw();
 	m_historyTime[0] = time;
+
+	Serial.println("done");
 }
 
 float Wind::avgRaw() {

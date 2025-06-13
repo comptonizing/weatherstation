@@ -14,9 +14,15 @@ IR::~IR() {
 }
 
 float IR::skyTemp() {
-	return m_mlx->readObjectTempC();
+	Serial.print("Taking IR sky ... ");
+	auto ret = m_mlx->readObjectTempC();
+	Serial.println("done");
+	return ret;
 }
 
 float IR::ambientTemp() {
-	return m_mlx->readAmbientTempC();
+	Serial.print("Taking IR sky ... ");
+	auto ret = m_mlx->readAmbientTempC();
+	Serial.println("done");
+	return ret;
 }

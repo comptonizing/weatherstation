@@ -20,6 +20,7 @@ void BME280::update(bool force) {
 		return;
 	}
 	m_lastReading = time;
+	Serial.print("Taking BME280 ... ");
 	Wire.beginTransmission(BME280ADDR);
 	if ( Wire.endTransmission() ) {
 		// Could not talk to BME
@@ -38,6 +39,7 @@ void BME280::update(bool force) {
 	}
 	float H = (log10(m_lastHumidity)-2)/0.4343 + (17.62*m_lastTemperature)/(243.12+m_lastTemperature);
 	m_lastDewpoint = 243.12*H/(17.62-H);
+	Serial.println("done");
 }
 
 float BME280::temperature() {

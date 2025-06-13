@@ -52,6 +52,8 @@ void SQM::update(bool force) {
 	if ( (time - m_lastReading) < SQM_SAMPLE_INTERVAL_SECONDS * THOUSAND && ! force ) {
 		return;
 	}
+	Serial.print("Taking SQM ... ");
 	m_tsl->takeReading();
+	Serial.println("done");
 	m_lastReading = time;
 }
