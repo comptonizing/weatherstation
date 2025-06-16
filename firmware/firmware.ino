@@ -71,7 +71,6 @@ void sendWind() {
 }
 
 void sendAll() {
-  watchdogReset();
   sendBME280();
   sendIR();
   sendRain();
@@ -86,6 +85,7 @@ void setup() {
 #ifdef WATCHDOG_ENABLE
   watchdogEnable();
   setWatchdogResetTimer(WATCHDOG_TIMEOUT);
+  watchdogReset();
 #endif
   updateAll();
 }
@@ -93,5 +93,6 @@ void setup() {
 void loop() {
   updateAll();
   sendAll();
+  watchdogReset();
   delay(DELAY);
 }
