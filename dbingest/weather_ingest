@@ -105,6 +105,7 @@ while True:
         diff = now - lastRead
         if diff > args.reset_timeout:
             reset(port)
+            submit(writer, args.db_bucket, args.db_org, "reset", 1.)
             lastRead = now
         _d("Reading line")
         line = None
