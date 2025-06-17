@@ -21,14 +21,6 @@ void updateAll() {
   watchdogReset();
 }
 
-template<typename T1, typename T2>
-void sendValue(T1 thing, T2 value) {
-  Serial.print(PREFIX);
-  Serial.print(thing);
-  Serial.println(value);
-}
-
-
 void sendBME280() {
   auto i = &(BME280::i());
   sendValue(F("Environment Temperature: "), i->temperature());

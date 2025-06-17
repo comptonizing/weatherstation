@@ -119,10 +119,10 @@ void Rain::update(bool force) {
 		return;
 	}
 
-	Serial.print("Taking rain ... ");
+	sendLog("Taking rain ... ");
 	m_lastCapacitance = readCapacitance();
 	m_lastPercentage = capacitance2percentage(m_lastCapacitance);
-	Serial.println("done");
+	sendLog("done");
 
 	m_lastReading = time;
 }

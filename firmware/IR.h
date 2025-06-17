@@ -2,6 +2,8 @@
 
 #include <Adafruit_MLX90614.h>
 
+#include "common.h"
+
 class IR {
 	public:
 		static IR &i();

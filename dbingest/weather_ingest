@@ -92,6 +92,13 @@ def reset(port):
     port.dtr = True
     port.flushInput()
 
+def submit(writer, bucket, org, key, value):
+        _d("Making point")
+        p = Point("weather").field(key, value)
+        _d("Submitting to db")
+        writer.write(bucket=bucket, org=org, record=p)
+
+
 while True:
     try:
         now = time()
@@ -108,16 +115,21 @@ while True:
             diff = now - lastRead
             if diff > args.reset_timeout:
                 reset(port)
+                submit(writer, args.db_bucket, args.db_org, "reset", 1.)
                 lastRead = now
             continue
 
+        if line.startswith("LOG:"):
+            text = line.lstrip("LOG: ")
+            print("Device log: {}".format(text))
+            continue
         found = False
         for thing in parameterMap:
             if line.startswith(thing):
                 found = True
                 break
         if not found:
-            sys.stderr.write("Warning: Don't know parameter \"{}\"\n".format(line))
+            sys.stderr.write("Warning: Don't know message \"{}\"\n".format(line))
             continue
         _d("Parsing \"{}\"".format(line))
         result = parse(thing + ": {}", line)
@@ -126,10 +138,7 @@ while True:
             continue
         key = parameterMap[thing]
         value = float(result[0])
-        _d("Making point")
-        p = Point("weather").field(key, value)
-        _d("Submitting to db")
-        writer.write(bucket=args.db_bucket, org=args.db_org, record=p)
+        submit(writer, args.db_bucket, args.db_org, key, value)
         if key != "startup":
             lastRead = time()
     except Exception as e:
