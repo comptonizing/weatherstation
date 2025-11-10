@@ -12,6 +12,7 @@ parser.add_argument("--port", help="Serial port", required=True)
 parser.add_argument("--baud", required=True, help="Baud rate")
 parser.add_argument("--read-timeout", required=False, help="Serial port read timeout", default=60, type=int)
 parser.add_argument("--reset-timeout", required=False, help="Timeout in seconds after which the DTR is used to reset the MCU", default=120)
+parser.add_argument("--altitude", required=False, help="Altitude in meters for pressure calculation", default=0, type=float)
 parser.add_argument("--db-url", required=True, help="InfluxDB URL")
 parser.add_argument("--db-token", required=True, help="InfluxDB token")
 parser.add_argument("--db-org", required=True, help="InfluxDB organization")
@@ -99,6 +100,7 @@ def submit(writer, bucket, org, key, value):
         writer.write(bucket=bucket, org=org, record=p)
 
 
+lastTemperature = None
 while True:
     try:
         now = time()
@@ -139,6 +141,16 @@ while True:
             continue
         key = parameterMap[thing]
         value = float(result[0])
+
+        if key == "env_temperature":
+            lastTemperature = value
+
+        if key == "env_pressure" and args.altitude != 0:
+            if lastTemperature is not None:
+                value = value + ((value * 9.80665 * args.altitude)/(287 * (273 + lastTemperature + (args.altitude/400))))
+            else:
+                continue
+
         submit(writer, args.db_bucket, args.db_org, key, value)
         if key != "startup":
             lastRead = time()
