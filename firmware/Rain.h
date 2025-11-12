@@ -9,18 +9,18 @@
 #define RAIN_SAMPLE_INTERVAL_SECONDS 5
 #define RAIN_PIN_CHARGE              7
 #define RAIN_PIN_DISCHARGE           8
-#define RAIN_PIN_VOLTAGE			 7
+#define RAIN_PIN_VOLTAGE             7
 #define RAIN_PIN_TEMPERATURE         1
 #define RAIN_PIN_HEATING             9
 #define RAIN_RESISTANCE              4.87e6
-#define RAIN_THRESHHOLD              648
+#define RAIN_THRESHOLD               648
 #define RAIN_TIMEOUT_MICROS          10000
 #define RAIN_TEMPERATURE_RESISTANCE  4700.
 #define RAIN_CAPACITANCE_DRY_PF      250.
 #define RAIN_CAPACITANCE_WET_PF      800.
 #define RAIN_TEMPERATURE_OFFSET      10
 #define RAIN_MAX_TEMPERATURE         45
-#define RAIN_MIN_TEMPERATURE         5
+#define RAIN_MIN_TEMPERATURE         10
 
 class Rain {
 	public:

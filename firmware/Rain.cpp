@@ -49,7 +49,7 @@ float Rain::readCapacitance() {
 	pinMode(RAIN_PIN_DISCHARGE, INPUT);
 	start = micros();
 	digitalWrite(RAIN_PIN_CHARGE, HIGH);
-	while ( analogRead(RAIN_PIN_VOLTAGE) < RAIN_THRESHHOLD ) {
+	while ( analogRead(RAIN_PIN_VOLTAGE) < RAIN_THRESHOLD ) {
 		if ( (micros() - start) >= RAIN_TIMEOUT_MICROS ) {
 			digitalWrite(RAIN_PIN_CHARGE, LOW);
 			return NAN;
@@ -119,10 +119,10 @@ void Rain::update(bool force) {
 		return;
 	}
 
-	sendLog("Taking rain ... ");
+	sendLog(F("Taking rain ... "));
 	m_lastCapacitance = readCapacitance();
 	m_lastPercentage = capacitance2percentage(m_lastCapacitance);
-	sendLog("done");
+	sendLog(F("done"));
 
 	m_lastReading = time;
 }
